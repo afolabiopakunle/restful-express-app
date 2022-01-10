@@ -1,5 +1,12 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+
+
+// parse application/json
+app.use(bodyParser.json())
+
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 courses = [
     {id: 1, name: 'Course 1', author: 'James Miller'},
@@ -23,7 +30,18 @@ app.get('/api/courses/:id', (req, res) => {
   res.send(course)
 })
 
+app.post('/api/courses', urlencodedParser, (req, res) => {
+    // if(!req.body) res.status(404).send('empty data');
+    const course = {
+        id: courses.length + 1,
+        name: req.body.name,
+        author: req.body.author,
+    }
+    courses.push(course);
+    res.send(course);
+})
+
 const port = process.env.PORT || 3000
 app.listen(port, () => {
-    console.log('app listening on port ' + port + '...')
+    console.log('app listening on port ' + port + '...');
 })
